@@ -6,7 +6,7 @@ Based on [pointnet.pytorch](https://github.com/fxia22/pointnet.pytorch)
 
 ### Results
 
-the segmatation result
+the segmentation result
 
 <p align=center><img width="80%" src="utils/show3d.png"/></p>
 
