@@ -34,9 +34,9 @@ class PartDataset(data.Dataset):
             dir_seg = os.path.join(self.root,self.cat[item],'points_label')
             fns = sorted(os.listdir(dir_point))
             if train:
-                fns = fns[:int(len(fns)*0.95)]
+                fns = fns[:int(len(fns)*0.7)]
             else:
-                fns = fns[int(len(fns)*0.95):]
+                fns = fns[int(len(fns)*0.7):]
 
             for fn in fns:
                 token = (os.path.splitext(os.path.basename(fn))[0])
@@ -80,7 +80,7 @@ class PartDataset(data.Dataset):
 
 if __name__ == '__main__':
     print('test')
-    d = PartDataset(root = '../data/shapenetcore_partanno_segmentation_benchmark_v0', class_choice = ['Chair'])
+    d = PartDataset(root = '../data/shapenetcore_partanno_segmentation_benchmark_v0',train=False,class_choice = ['Chair'])
     print(len(d))
     ps, seg = d[0]
     print(ps.size(), ps.type(), seg.size(),seg.type(),d.num_seg_classes)

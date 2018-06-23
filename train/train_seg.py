@@ -66,7 +66,7 @@ model = model.train()
 num_batch = int(len(train_dataset)/opt.batchsize)
 for epoch in range(opt.num_epoch):
 	totalloss = 0
-	trainacc = 0
+	totalcorrect = 0
 	totalnum = 0
 	for i,(points,labels) in enumerate(trainLoader):
 		points = points.transpose(2,1)
@@ -82,25 +82,24 @@ for epoch in range(opt.num_epoch):
 		correct = index.eq(labels.data).cpu().sum()
 		totalloss += loss.data
 		totalnum += len(labels)
-		batchacc = correct.item()/(opt.batchsize*opt.num_points)
-		trainacc += batchacc
-	print('epoch:{},train loss:{},train accracy:{}'.format(epoch+1,totalloss/totalnum,trainacc/(num_batch)))
+		totalcorrect += correct.item()
+	print('epoch:{},train loss:{},train accracy:{}'.format(epoch+1,totalloss/totalnum,totalcorrect/totalnum))
 
-	if (epoch+1) % 10 == 0:
+	if (epoch+1)% 2 == 0:
 		model.eval() 
-		testacc = 0
+		totalnum = 0
+		totalcorrect = 0
 		for i,(points,labels) in enumerate(testLoader):
 			points = points.transpose(2,1)
-			labels = labels[:,0]
 			points = points.cuda();labels = labels.cuda()
 			preds , _ = model(points)
 			preds = preds.view(-1,num_classes)
 			labels = labels.view(-1,1)[:,0]-1
 			index = preds.data.max(1)[1]
 			correct = index.eq(labels.data).cpu().sum()
-			batchacc = correct.item()/(opt.batchsize*opt.num_points)
-			testacc += batchacc
-		print('epoch:{},test accracy:{}'.format(epoch+1,testacc/(int(len(test_dataset)/opt.batchsize))))
+			totalnum += len(labels)
+			totalcorrect += correct.item()
+		print('epoch:{},test accuracy:{}'.format(epoch+1,totalcorrect/totalnum))
 		model.train()
 	torch.save(model.state_dict(),'%s/seg_model_%d.pth' % (opt.outdir, epoch))
 
